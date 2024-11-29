@@ -44,7 +44,7 @@ INSERT INTO people (name, id, password, phone) VALUES
 
 -- 编号、姓名、学号、书籍、状态（借阅/归还）、时间
 create table form (
-   id              CHAR(40)             not null,
+   id              INT                  not null,
    name            CHAR(40)             not null,
    student_id      CHAR(40)             not null,
    book            CHAR(40)             not null,
@@ -54,6 +54,6 @@ create table form (
 );
 
 INSERT INTO form (id, name, student_id, book, status, time) VALUES
-('00001', '张三', '100020', '《百年孤独》', '借阅', '2024-11-10'),
-('00002', '李四', '200120', '《活着》', '借阅', '2024-11-11'),
-('00003', '王五', '510000', '《1984》', '借阅', '2024-11-12');
+(1, '张三', '100020', '《百年孤独》', '借阅', '2024-11-10'),
+(2, '李四', '200120', '《活着》', '借阅', '2024-11-11'),
+(3, '王五', '510000', '《1984》', '借阅', '2024-11-12');

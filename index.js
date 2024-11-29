@@ -2,6 +2,7 @@ const express = require('express');
 const pg = require('pg');
 const { Client } = pg;
 const { readFile } = require('fs');
+const { get } = require('http');
 
 const app = express();
 const client = new Client({
@@ -74,10 +75,40 @@ app.get('/', (req, res) => {
 
 
 let isAuthenticated = false;
+const userData = {
+    id: 0,
+    name : '',
+    student_id: '',
+};
+
+
+const querycount = {
+    text: 'SELECT COUNT(*) AS count FROM form;',
+};
+function getCount() {
+    return new Promise((resolve, reject) => {
+        client.query(querycount)
+            .then(result => {
+                resolve(result.rows[0].count);
+            })
+            .catch(error => {
+                reject(error);
+            });
+    });
+}
+(async () => {
+    try {
+        userData.id = await getCount();
+    } catch (error) {
+        console.error('查询出错:', error);
+    }
+})();
+
 
 app.get('/login', async (req, res) => {
     const name = req.query.name;
     const password = req.query.password;
+    userData.name = name;
     
     if (!name || !password) {
         res.send('请输入用户名和密码');
@@ -101,6 +132,28 @@ app.get('/home', async (req, res) => {
             res.send(data);
         }
     });
+    const queryid = {
+        text: 'SELECT id FROM people WHERE name = $1',
+        values: [userData.name]
+    };
+    function getId() {
+        return new Promise((resolve, reject) => {
+            client.query(queryid)
+                .then(result => {
+                    resolve(result.rows[0].id);
+                })
+                .catch(error => {
+                    reject(error);
+                });
+        });
+    }
+    (async () => {
+        try {
+            userData.student_id = await getId();
+        } catch (error) {
+            console.error('查询出错:', error);
+        }
+    })();
 }),
 
 app.get('/home/query', async (req, res) => {
@@ -165,7 +218,10 @@ app.get('/home/borrow', async (req, res) => {
 
             await client.query(updateQuery);
             res.send('书籍状态已更新为已借出，并已添加记录到表单。');
-
+            
+            console.log(userData.id)
+            console.log(userData.name)
+            console.log(userData.student_id)
             // const insertCommand = {
             //     text: 'INSERT INTO form (id, name, student_id, book, status, time) VALUES',
             //     values: ['已借出', bookName]
@@ -222,6 +278,19 @@ app.get('/home/return', async (req, res) => {
         res.status(500).send('服务器错误');
     }
 });
+
+
+app.get('/sign', async (req, res) => {
+    readFile('./sign.html', 'utf-8', (err, data) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Internal Server Error');
+        } else {
+            res.send(data);
+        }
+    });
+}),
+
 
 app.listen(3000, () => {
     console.log('Server is running on port 3000');
