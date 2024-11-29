@@ -7,7 +7,7 @@ const { get } = require('http');
 const app = express();
 const client = new Client({
     user: 'postgres',
-    password: '0.0',
+    password: 'XJH20040215',
     host: 'localhost',
     port: '5432',
     database: 'library'
@@ -131,8 +131,6 @@ function getCount() {
         console.error('查询出错:', error);
     }
 })();
-
-
 
 app.get('/login', async (req, res) => {
     const name = req.query.name;
