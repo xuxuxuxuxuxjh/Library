@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>home</title>
+    <style>
+        .space {
+            margin-bottom: 20px; /* 设置空行的间距 */
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Library</h1>
+    
+    <div class="space"></div> <!-- 添加空行 -->
+
+    <input type="text" id="bookNameInput" placeholder="Enter book name">
+    <button id="btnQuery">查询</button>
+    
+    <div class="space"></div> <!-- 添加空行 -->
+
+    <input type="text" id="bookNameInput2" placeholder="Enter book name">
+    <button id="btnBorrow">借阅</button>
+
+    <div class="space"></div> <!-- 添加空行 -->
+
+    <input type="text" id="bookNameInput3" placeholder="Enter book name">
+    <button id="btnReturn">归还</button>
+    
+    <div id="result"></div>
+
+    <script>
+        document.getElementById('btnQuery').addEventListener('click', function() {
+            const bookName = document.getElementById('bookNameInput').value;
+            fetch(`http://localhost:3000/home/query?bookName=${bookName}`).then(async function(response) {
+                const result = document.getElementById('result');
+                result.innerHTML = await response.text();
+            });
+        });
+
+        document.getElementById('btnBorrow').addEventListener('click', function() {
+            const bookName = document.getElementById('bookNameInput2').value;
+            fetch(`http://localhost:3000/home/borrow?bookName=${bookName}`).then(async function(response) {
+                const result = document.getElementById('result');
+                result.innerHTML = await response.text();
+            });
+        });
+
+        document.getElementById('btnReturn').addEventListener('click', function() {
+            const bookName = document.getElementById('bookNameInput3').value;
+            fetch(`http://localhost:3000/home/return?bookName=${bookName}`).then(async function(response) {
+                const result = document.getElementById('result');
+                result.innerHTML = await response.text();
+            });
+        });
+    </script>
+</body>
+</html>

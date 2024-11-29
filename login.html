@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>login</title>
+    <style>
+        .space {
+            margin-bottom: 20px; /* 设置空行的间距 */
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Library Login</h1>
+    <input type="text" id="usernameInput" placeholder="Enter username">
+    <input type="password" id="passwordInput" placeholder="Enter password">
+    <button id="loginBtn">Login</button>
+    <div id="result"></div>
+
+    <script>
+        document.getElementById('loginBtn').addEventListener('click', function() {
+            const name = document.getElementById('usernameInput').value;
+            const password = document.getElementById('passwordInput').value;
+            fetch(`http://localhost:3000/login?name=${name}&password=${password}`).then(async function(response) {
+                const result = document.getElementById('result');
+                const text = await response.text();
+                result.innerHTML = text;
+                
+                if (text === '欢迎') {
+                    window.location.href = 'home'; // 跳转到主页
+                }
+            });
+        });
+    </script>
+</body>
+</html>
