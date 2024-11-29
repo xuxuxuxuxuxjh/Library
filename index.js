@@ -50,6 +50,16 @@ async function checkCredentials(name, password) {
     return res.rows.length > 0;
 }
 
+async function checkRegister(student_id) {
+    const query = {
+        text: 'SELECT * FROM people WHERE student_id = $1',
+        values: [student_id]
+    };
+    
+    const res = await client.query(query);
+    return res.rows.length > 0;
+}
+
 async function getBookDetails(bookName) {
     const query = {
         text: 'SELECT * FROM book WHERE name = $1',
@@ -141,7 +151,7 @@ app.get('/login', async (req, res) => {
     }
 });
 
-app.get('/register', (req, res) => {
+app.get('/register', async(req, res) => {
     readFile('./register.html', 'utf-8', (err, data) => {
         if (err) {
             console.error(err);
@@ -150,8 +160,36 @@ app.get('/register', (req, res) => {
             res.send(data);
         }
     });
+    const name = req.query.name;
+    const student_id = req.query.student_id;
+    const password = req.query.password;
+    const phone = req.query.phone
+    is_register = await checkRegister(student_id);
+    if (is_register)
+    {
+        res.status(400).send('该用户已注册');
+    }
+    else{
+        const insertQuery = {
+            text: 'INSERT INTO people (name, id, password, phone) VALUES ($1, $2, $3, $4)',
+            values: [name, student_id, password, phone]
+        };
+        await client.query(insertQuery);
+        res.send('注册成功')
+    }
 });
 
+app.get('/admin', async (req, res) => {
+    readFile('./admin.html', 'utf-8', (err, data) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Internal Server Error');
+        } else {
+            res.send(data);
+        }
+    });
+    
+});
 
 app.get('/home', async (req, res) => {
     readFile('./home.html', 'utf-8', (err, data) => {
