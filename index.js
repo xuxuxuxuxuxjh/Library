@@ -151,8 +151,7 @@ app.get('/login', async (req, res) => {
     }
 });
 
-app.get('/register', async(req, res) => {
-    console.log('1111')
+app.get('/register', async (req, res) => {
     readFile('./register.html', 'utf-8', (err, data) => {
         if (err) {
             console.error(err);
@@ -162,7 +161,9 @@ app.get('/register', async(req, res) => {
         }
     });
 }),
-app.get('/register/signup', async(req, res) => {
+
+app.get('/register/signup', async (req, res) => {
+    console.log('222222222')
     const name = req.query.name;
     const id = req.query.id;
     const password = req.query.password;
