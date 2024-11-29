@@ -147,24 +147,14 @@
         document.getElementById('viewRecordBtn').addEventListener('click', function() {
             // 发送请求到后端接口获取借阅记录
             fetch('http://localhost:3000/admin/borrowRecords')
-                .then(response => response.json())
-                .then(records => {
-                    const recordList = document.getElementById('recordList');
-                    recordList.innerHTML = ''; // 清空现有内容
-                    
-                    // 动态渲染借阅记录
-                    records.forEach(record => {
-                        const listItem = document.createElement('li');
-                        listItem.textContent = `学生: ${record.studentName} (学号: ${record.studentId})，书名: ${record.bookTitle}，借阅日期: ${record.borrowDate}`;
-                        recordList.appendChild(listItem);
-                    });
-
-                    // 显示借阅记录框
+                .then(response => response.text())
+                .then(html => {
                     document.getElementById('recordBox').style.display = 'block';
+                    document.getElementById('recordList').innerHTML = html;
                 })
                 .catch(error => {
                     console.error('查询借阅记录时出错:', error);
-                    alert('查询借阅记录失败。');
+                    alert('查询借阅记录失败');
                 });
         });
     </script>
