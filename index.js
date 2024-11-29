@@ -60,6 +60,25 @@ async function getBookDetails(bookName) {
     return res.rows;
 }
 
+async function registerUser(name, password) {
+    const query = {
+        text: 'SELECT * FROM people WHERE name = $1',
+        values: [name]
+    };
+    const res = await client.query(query);
+
+    if (res.rows.length > 0) {
+        return false;
+    } else {
+        const insertQuery = {
+            text: 'INSERT INTO people (name, password) VALUES ($1, $2)',
+            values: [name, password]
+        };
+        await client.query(insertQuery);
+        return true;
+    }
+}
+
 connectToPostgres();
 
 app.get('/', (req, res) => {
@@ -120,6 +139,17 @@ app.get('/login', async (req, res) => {
     } else {
         res.send('密码错误');
     }
+});
+
+app.get('/register', (req, res) => {
+    readFile('./register.html', 'utf-8', (err, data) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Internal Server Error');
+        } else {
+            res.send(data);
+        }
+    });
 });
 
 
@@ -219,13 +249,15 @@ app.get('/home/borrow', async (req, res) => {
             await client.query(updateQuery);
             res.send('书籍状态已更新为已借出，并已添加记录到表单。');
             
+            userData.id++
             console.log(userData.id)
             console.log(userData.name)
             console.log(userData.student_id)
-            // const insertCommand = {
-            //     text: 'INSERT INTO form (id, name, student_id, book, status, time) VALUES',
-            //     values: ['已借出', bookName]
-            // };
+            const insertQuery = {
+                text: 'INSERT INTO form (id, name, student_id, book, status, time) VALUES ($1, $2, $3, $4, $5, $6)',
+                values: [userData.id, userData.name, userData.student_id, bookName, '已借出', '2024-11-29']
+            };
+            await client.query(insertQuery);
         }
     } catch (error) {
         console.error('Error:', error);
@@ -272,24 +304,22 @@ app.get('/home/return', async (req, res) => {
 
             await client.query(updateQuery);
             res.send('书籍状态已更新为在架，并已添加记录到表单。');
+
+            userData.id++
+            console.log(userData.id)
+            console.log(userData.name)
+            console.log(userData.student_id)
+            const insertQuery = {
+                text: 'INSERT INTO form (id, name, student_id, book, status, time) VALUES ($1, $2, $3, $4, $5, $6)',
+                values: [userData.id, userData.name, userData.student_id, bookName, '归还', '2024-11-29']
+            };
+            await client.query(insertQuery);
         }
     } catch (error) {
         console.error('Error:', error);
         res.status(500).send('服务器错误');
     }
 });
-
-
-app.get('/sign', async (req, res) => {
-    readFile('./sign.html', 'utf-8', (err, data) => {
-        if (err) {
-            console.error(err);
-            res.status(500).send('Internal Server Error');
-        } else {
-            res.send(data);
-        }
-    });
-}),
 
 
 app.listen(3000, () => {

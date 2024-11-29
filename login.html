@@ -10,7 +10,7 @@
             margin: 0;
             padding: 0;
             font-family: Arial, sans-serif;
-            background-image: url('background.png'); /* 背景图片链接 */
+            background-image: url('background.jpg'); /* 背景图片链接 */
             background-size: cover;
             background-position: center;
             height: 100vh; /* 视窗高度 */
@@ -67,6 +67,23 @@
             font-size: 14px;
             color: red;
         }
+
+        /* 注册按钮样式 */
+        .login-container .register-btn {
+            margin-top: 10px;
+            width: 95%;
+            padding: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .login-container .register-btn:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
@@ -76,6 +93,7 @@
         <input type="text" id="usernameInput" placeholder="Enter username">
         <input type="password" id="passwordInput" placeholder="Enter password">
         <button id="loginBtn">Login</button>
+        <button class="register-btn" id="registerBtn">Register</button>
         <div id="result"></div>
     </div>
 
@@ -101,6 +119,11 @@
                     console.error('Login failed:', error);
                     document.getElementById('result').innerHTML = 'Login failed. Please try again.';
                 });
+        });
+
+        // 注册按钮点击事件，跳转到 register.html
+        document.getElementById('registerBtn').addEventListener('click', function() {
+            window.location.href = 'register'; // 替换为注册页面的实际路径
         });
     </script>
 </body>
