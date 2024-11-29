@@ -50,10 +50,10 @@ async function checkCredentials(name, password) {
     return res.rows.length > 0;
 }
 
-async function checkRegister(student_id) {
+async function checkRegister(id) {
     const query = {
-        text: 'SELECT * FROM people WHERE student_id = $1',
-        values: [student_id]
+        text: 'SELECT * FROM people WHERE id = $1',
+        values: [id]
     };
     
     const res = await client.query(query);
@@ -152,6 +152,7 @@ app.get('/login', async (req, res) => {
 });
 
 app.get('/register', async(req, res) => {
+    console.log('1111')
     readFile('./register.html', 'utf-8', (err, data) => {
         if (err) {
             console.error(err);
@@ -160,11 +161,17 @@ app.get('/register', async(req, res) => {
             res.send(data);
         }
     });
+}),
+app.get('/register/signup', async(req, res) => {
     const name = req.query.name;
-    const student_id = req.query.student_id;
+    const id = req.query.id;
     const password = req.query.password;
     const phone = req.query.phone
-    is_register = await checkRegister(student_id);
+    console.log(name)
+    console.log(id)
+    console.log(password)
+    console.log(phone)
+    is_register = await checkRegister(id);
     if (is_register)
     {
         res.status(400).send('该用户已注册');
@@ -172,7 +179,7 @@ app.get('/register', async(req, res) => {
     else{
         const insertQuery = {
             text: 'INSERT INTO people (name, id, password, phone) VALUES ($1, $2, $3, $4)',
-            values: [name, student_id, password, phone]
+            values: [name, id, password, phone]
         };
         await client.query(insertQuery);
         res.send('注册成功')
