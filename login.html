@@ -110,9 +110,13 @@
                     const text = await response.text();
                     result.innerHTML = text;
                     
-                    // 如果登录成功，跳转到主页
+                    // 如果登录成功，判断是否为 admin
                     if (text === '欢迎') {
-                        window.location.href = 'home'; // 替换为主页的实际路径
+                        if (name === 'admin') {
+                            window.location.href = 'admin.html'; // 跳转到 admin 页面
+                        } else {
+                            window.location.href = 'home'; // 普通用户跳转到主页
+                        }
                     }
                 })
                 .catch(function(error) {

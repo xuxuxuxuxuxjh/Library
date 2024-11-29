@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理员页面</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-image: url('background.jpg'); /* 背景图片 */
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .admin-container {
+            background: rgba(255, 255, 255, 0.8); 
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 400px;
+        }
+        .admin-container h1 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #333;
+        }
+        .admin-container input,
+        .admin-container select {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .admin-container button {
+            width: 95%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .admin-container button:hover {
+            background-color: #45a049;
+        }
+        .admin-container .register-btn {
+            background-color: #007BFF;
+            margin-top: 10px;
+        }
+        .admin-container .register-btn:hover {
+            background-color: #0056b3;
+        }
+        #recordBox {
+            display: none;
+            margin-top: 20px;
+        }
+        #recordList {
+            list-style: none;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="admin-container">
+        <h1>管理员页面</h1>
+
+        <!-- 删除用户功能 -->
+        <h3>删除用户</h3>
+        <input type="text" id="studentIdInput" placeholder="输入学号">
+        <button id="deleteBtn">删除用户</button>
+
+        <!-- 添加图书功能 -->
+        <h3>添加图书</h3>
+        <input type="text" id="studentNameInput" placeholder="学生姓名">
+        <input type="text" id="studentIdAddInput" placeholder="学生学号">
+        <input type="text" id="bookTitleInput" placeholder="书名">
+        <button id="addBookBtn">添加图书</button>
+
+        <!-- 查询借阅记录功能 -->
+        <h3>查询借阅记录</h3>
+        <button id="viewRecordBtn">查询借阅记录</button>
+
+        <!-- 借阅记录显示区域 -->
+        <div id="recordBox">
+            <ul id="recordList"></ul>
+        </div>
+    </div>
+
+    <script>
+        // 删除用户功能
+        document.getElementById('deleteBtn').addEventListener('click', function() {
+            const studentId = document.getElementById('studentIdInput').value;
+            
+            // 调用后端删除用户接口（示例接口）
+            fetch(`http://localhost:3000/api/deleteUser?studentId=${studentId}`, {
+                method: 'DELETE'
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+            })
+            .catch(error => {
+                console.error('删除用户时出错:', error);
+                alert('删除用户失败。');
+            });
+        });
+
+        // 添加图书功能
+        document.getElementById('addBookBtn').addEventListener('click', function() {
+            const studentName = document.getElementById('studentNameInput').value;
+            const studentId = document.getElementById('studentIdAddInput').value;
+            const bookTitle = document.getElementById('bookTitleInput').value;
+
+            // 调用后端添加图书接口（示例接口）
+            fetch('http://localhost:3000/api/addBook', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    studentName: studentName,
+                    studentId: studentId,
+                    bookTitle: bookTitle
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+            })
+            .catch(error => {
+                console.error('添加图书时出错:', error);
+                alert('添加图书失败。');
+            });
+        });
+
+        // 查询借阅记录功能
+        document.getElementById('viewRecordBtn').addEventListener('click', function() {
+            // 发送请求到后端接口获取借阅记录
+            fetch('http://localhost:3000/api/borrowRecords')
+                .then(response => response.json())
+                .then(records => {
+                    const recordList = document.getElementById('recordList');
+                    recordList.innerHTML = ''; // 清空现有内容
+                    
+                    // 动态渲染借阅记录
+                    records.forEach(record => {
+                        const listItem = document.createElement('li');
+                        listItem.textContent = `学生: ${record.studentName} (学号: ${record.studentId})，书名: ${record.bookTitle}，借阅日期: ${record.borrowDate}`;
+                        recordList.appendChild(listItem);
+                    });
+
+                    // 显示借阅记录框
+                    document.getElementById('recordBox').style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('查询借阅记录时出错:', error);
+                    alert('查询借阅记录失败。');
+                });
+        });
+    </script>
+</body>
+</html>
