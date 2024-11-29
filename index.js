@@ -132,6 +132,35 @@ function getCount() {
     }
 })();
 
+const bookData = {
+    id: 0,
+    name : '',
+    author: '',
+    edition: '',
+};
+
+const querycountbook = {
+    text: 'SELECT COUNT(*) AS count FROM book;',
+};
+function getCountbook() {
+    return new Promise((resolve, reject) => {
+        client.query(querycountbook)
+            .then(result => {
+                resolve(result.rows[0].count);
+            })
+            .catch(error => {
+                reject(error);
+            });
+    });
+}
+(async () => {
+    try {
+        bookData.id = await getCountbook();
+    } catch (error) {
+        console.error('查询出错:', error);
+    }
+})();
+
 app.get('/login', async (req, res) => {
     const name = req.query.name;
     const password = req.query.password;
