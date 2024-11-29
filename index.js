@@ -7,10 +7,10 @@ const { get } = require('http');
 const app = express();
 const client = new Client({
     user: 'postgres',
-    password: 'XJH20040215',
+    password: '139653',
     host: 'localhost',
     port: '5432',
-    database: 'library'
+    database: 'lib'
 });
 
 function convertToPinyin(str) {
@@ -86,6 +86,38 @@ async function registerUser(name, password) {
         };
         await client.query(insertQuery);
         return true;
+    }
+}
+
+async function deleteUser(studentId) {
+    try {
+        // 首先检查用户是否存在
+        const checkQuery = {
+            text: 'SELECT * FROM people WHERE id = $1',
+            values: [studentId]
+        };
+        const checkResult = await client.query(checkQuery);
+        
+        if (checkResult.rows.length === 0) {
+            return { success: false, message: '用户不存在' };
+        }
+
+        // 检查是否试图删除管理员账户
+        if (checkResult.rows[0].name === 'Admin') {
+            return { success: false, message: '不能删除管理员账户' };
+        }
+
+        // 如果用户存在且不是管理员，执行删除操作
+        const deleteQuery = {
+            text: 'DELETE FROM people WHERE id = $1',
+            values: [studentId]
+        };
+        await client.query(deleteQuery);
+        
+        return { success: true, message: '用户删除成功' };
+    } catch (error) {
+        console.error('删除用户时出错:', error);
+        return { success: false, message: '删除用户失败' };
     }
 }
 
@@ -404,6 +436,33 @@ app.get('/home/return', async (req, res) => {
     }
 });
 
+app.delete('/admin/deleteUser', async (req, res) => {
+    if (!isAuthenticated) {
+        res.status(401).json({ success: false, message: '请先登录' });
+        return;
+    }
+
+    // 检查是否是管理员
+    if (userData.name !== 'Admin') {
+        res.status(403).json({ success: false, message: '只有管理员才能删除用户' });
+        return;
+    }
+
+    const studentId = req.query.studentId;
+    
+    if (!studentId) {
+        res.status(400).json({ success: false, message: '请提供学号' });
+        return;
+    }
+
+    try {
+        const result = await deleteUser(studentId);
+        res.json(result);
+    } catch (error) {
+        console.error('处理删除用户请求时出错:', error);
+        res.status(500).json({ success: false, message: '服务器错误' });
+    }
+});
 
 app.listen(3000, () => {
     console.log('Server is running on port 3000');
