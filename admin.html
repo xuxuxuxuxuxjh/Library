@@ -81,9 +81,9 @@
 
         <!-- 添加图书功能 -->
         <h3>添加图书</h3>
-        <input type="text" id="studentNameInput" placeholder="学生姓名">
-        <input type="text" id="studentIdAddInput" placeholder="学生学号">
         <input type="text" id="bookTitleInput" placeholder="书名">
+        <input type="text" id="bookAuthorInput" placeholder="作者">
+        <input type="text" id="bookVersionInput" placeholder="版本">
         <button id="addBookBtn">添加图书</button>
 
         <!-- 查询借阅记录功能 -->
@@ -102,7 +102,7 @@
             const studentId = document.getElementById('studentIdInput').value;
             
             // 调用后端删除用户接口（示例接口）
-            fetch(`http://localhost:3000/api/deleteUser?studentId=${studentId}`, {
+            fetch(`http://localhost:3000/admin/deleteUser?studentId=${studentId}`, {
                 method: 'DELETE'
             })
             .then(response => response.json())
@@ -117,20 +117,20 @@
 
         // 添加图书功能
         document.getElementById('addBookBtn').addEventListener('click', function() {
-            const studentName = document.getElementById('studentNameInput').value;
-            const studentId = document.getElementById('studentIdAddInput').value;
             const bookTitle = document.getElementById('bookTitleInput').value;
+            const bookAuthor = document.getElementById('bookAuthorInput').value;
+            const bookVersion = document.getElementById('bookVersionInput').value;
 
             // 调用后端添加图书接口（示例接口）
-            fetch('http://localhost:3000/api/addBook', {
+            fetch('http://localhost:3000/admin/addBook', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    studentName: studentName,
-                    studentId: studentId,
-                    bookTitle: bookTitle
+                    bookTitle: bookTitle,
+                    bookAuthor: bookAuthor,
+                    bookVersion: bookVersion
                 })
             })
             .then(response => response.json())
@@ -146,7 +146,7 @@
         // 查询借阅记录功能
         document.getElementById('viewRecordBtn').addEventListener('click', function() {
             // 发送请求到后端接口获取借阅记录
-            fetch('http://localhost:3000/api/borrowRecords')
+            fetch('http://localhost:3000/admin/borrowRecords')
                 .then(response => response.json())
                 .then(records => {
                     const recordList = document.getElementById('recordList');
