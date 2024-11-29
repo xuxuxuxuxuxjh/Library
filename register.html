@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Library Register</title>
+    <title>图书馆注册</title>
     <style>
         /* 设置页面的整体样式 */
         body {
@@ -89,27 +89,36 @@
 <body>
     <!-- 注册表单容器 -->
     <div class="register-container">
-        <h1>Library Register</h1>
-        <input type="text" id="usernameInput" placeholder="Enter username">
-        <input type="password" id="passwordInput" placeholder="Enter password">
-        <button id="registerBtn">Register</button>
-        <button class="back-btn" id="backBtn">Back to Login</button>
+        <h1>图书馆注册</h1>
+        <input type="text" id="nameInput" placeholder="请输入姓名">
+        <input type="text" id="idInput" placeholder="请输入学号">
+        <input type="password" id="passwordInput" placeholder="请输入密码">
+        <input type="text" id="phoneInput" placeholder="请输入电话号码">
+        <button id="registerBtn">注册</button>
+        <button class="back-btn" id="backBtn">返回登录</button>
         <div id="result"></div>
     </div>
 
     <script>
         // 注册按钮点击事件
         document.getElementById('registerBtn').addEventListener('click', function() {
-            const name = document.getElementById('usernameInput').value;
+            const name = document.getElementById('nameInput').value;
+            const id = document.getElementById('idInput').value;
             const password = document.getElementById('passwordInput').value;
+            const phone = document.getElementById('phoneInput').value;
 
             // 调用注册接口
-            fetch(`http://localhost:3000/register?name=${name}&password=${password}`, {
+            fetch(`http://localhost:3000/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ username: name, password: password })
+                body: JSON.stringify({
+                    name: name,
+                    id: id,
+                    password: password,
+                    phone: phone
+                })
             })
             .then(async function(response) {
                 const result = document.getElementById('result');
@@ -122,14 +131,14 @@
                 }
             })
             .catch(function(error) {
-                console.error('Register failed:', error);
+                console.error('注册失败:', error);
                 document.getElementById('result').innerHTML = '注册失败，请重试。';
             });
         });
 
         // 返回到登录页面
         document.getElementById('backBtn').addEventListener('click', function() {
-            window.location.href = '/'; // 返回到登录页面
+            window.location.href = 'login'; // 返回到登录页面
         });
     </script>
 </body>
