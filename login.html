@@ -1,133 +1,230 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Library Login</title>
+    <title>图书馆管理系统 - 登录</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        /* 设置页面的整体样式 */
         body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            background-image: url('background.jpg'); /* 背景图片链接 */
-            background-size: cover;
-            background-position: center;
-            height: 100vh; /* 视窗高度 */
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
+            padding: 20px;
         }
 
-        /* 登录容器样式 */
         .login-container {
-            background: rgba(255, 255, 255, 0.8); /* 半透明背景 */
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
             text-align: center;
-            width: 300px;
         }
 
-        .login-container h1 {
-            margin-bottom: 20px;
-            font-size: 24px;
+        .logo-container {
+            margin-bottom: 30px;
+        }
+
+        .logo-icon {
+            font-size: 48px;
+            color: #4a90e2;
+            margin-bottom: 15px;
+        }
+
+        h1 {
             color: #333;
+            font-size: 24px;
+            margin-bottom: 30px;
         }
 
-        /* 输入框样式 */
-        .login-container input {
-            width: 90%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
         }
 
-        /* 按钮样式 */
-        .login-container button {
-            width: 95%;
-            padding: 10px;
-            background-color: #4CAF50;
-            color: white;
+        .form-control {
+            border-radius: 20px;
+            padding: 12px 20px;
+            border: 1px solid #ddd;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.25);
+            border-color: #4a90e2;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .input-group-text {
+            background: transparent;
             border: none;
-            border-radius: 5px;
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+            color: #666;
+        }
+
+        .input-group .form-control {
+            padding-left: 45px;
+        }
+
+        .action-btn {
+            width: 100%;
+            padding: 12px;
+            border-radius: 20px;
+            border: none;
             font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
             cursor: pointer;
         }
 
-        .login-container button:hover {
-            background-color: #45a049;
+        .login-btn {
+            background: #4CAF50;
+            color: white;
         }
 
-        /* 消息显示区域 */
-        .login-container #result {
-            margin-top: 10px;
+        .register-btn {
+            background: #2196F3;
+            color: white;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        #result {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 10px;
             font-size: 14px;
-            color: red;
+            display: none;
         }
 
-        /* 注册按钮样式 */
-        .login-container .register-btn {
-            margin-top: 10px;
-            width: 95%;
-            padding: 10px;
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
+        .alert-error {
+            background: #ffebee;
+            color: #c62828;
         }
 
-        .login-container .register-btn:hover {
-            background-color: #0056b3;
+        .alert-success {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        @media (max-width: 768px) {
+            .login-container {
+                padding: 30px 20px;
+            }
+        }
+
+        .animate-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
     </style>
 </head>
 <body>
-    <!-- 登录表单容器 -->
-    <div class="login-container">
-        <h1>Library Login</h1>
-        <input type="text" id="usernameInput" placeholder="Enter username">
-        <input type="password" id="passwordInput" placeholder="Enter password">
-        <button id="loginBtn">Login</button>
-        <button class="register-btn" id="registerBtn">Register</button>
+    <div class="login-container animate-in">
+        <div class="logo-container">
+            <i class="fas fa-book-reader logo-icon"></i>
+            <h1>图书馆管理系统</h1>
+        </div>
+
+        <div class="input-group">
+            <span class="input-group-text">
+                <i class="fas fa-user"></i>
+            </span>
+            <input type="text" id="usernameInput" class="form-control" placeholder="请输入用户名">
+        </div>
+
+        <div class="input-group">
+            <span class="input-group-text">
+                <i class="fas fa-lock"></i>
+            </span>
+            <input type="password" id="passwordInput" class="form-control" placeholder="请输入密码">
+        </div>
+
+        <button id="loginBtn" class="action-btn login-btn">
+            <i class="fas fa-sign-in-alt"></i> 登录
+        </button>
+
+        <button id="registerBtn" class="action-btn register-btn">
+            <i class="fas fa-user-plus"></i> 注册
+        </button>
+
         <div id="result"></div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // 登录按钮点击事件
         document.getElementById('loginBtn').addEventListener('click', function() {
             const name = document.getElementById('usernameInput').value;
             const password = document.getElementById('passwordInput').value;
+            const result = document.getElementById('result');
+
+            // 显示结果区域
+            result.style.display = 'block';
 
             // 调用登录接口
             fetch(`http://localhost:3000/login?name=${name}&password=${password}`)
                 .then(async function(response) {
-                    const result = document.getElementById('result');
                     const text = await response.text();
                     result.innerHTML = text;
                     
-                    // 如果登录成功，判断是否为 admin
+                    // 根据返回结果设置样式
                     if (text === '欢迎') {
+                        result.className = 'alert-success';
+                        // 判断是否为管理员
                         if (name === 'Admin') {
-                            window.location.href = 'admin'; // 跳转到 admin 页面
+                            window.location.href = 'admin';
                         } else {
-                            window.location.href = 'home'; // 普通用户跳转到主页
+                            window.location.href = 'home';
                         }
+                    } else {
+                        result.className = 'alert-error';
                     }
                 })
                 .catch(function(error) {
-                    console.error('Login failed:', error);
-                    document.getElementById('result').innerHTML = 'Login failed. Please try again.';
+                    console.error('登录失败:', error);
+                    result.innerHTML = '登录失败，请重试。';
+                    result.className = 'alert-error';
                 });
         });
 
-        // 注册按钮点击事件，跳转到 register.html
+        // 注册按钮点击事件
         document.getElementById('registerBtn').addEventListener('click', function() {
-            window.location.href = 'register'; // 替换为注册页面的实际路径
+            window.location.href = 'register';
+        });
+
+        // 添加回车键登录功能
+        document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('loginBtn').click();
+            }
         });
     </script>
 </body>

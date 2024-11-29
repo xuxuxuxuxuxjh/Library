@@ -3,250 +3,227 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>管理员页面</title>
+    <title>图书馆管理系统 - 管理员页面</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            background-image: url('background.jpg'); /* 背景图片 */
-            background-size: cover;
-            background-position: center;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
         }
+
         .admin-container {
-            background: rgba(255, 255, 255, 0.8); 
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            text-align: center;
-            width: 400px;
+            margin: 20px auto;
+            max-width: 1200px;
         }
-        .admin-container h1 {
-            margin-bottom: 20px;
-            font-size: 24px;
-            color: #333;
-        }
-        .admin-container input,
-        .admin-container select {
-            width: 90%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-        .admin-container button {
-            width: 95%;
-            padding: 10px;
-            background-color: #4CAF50;
-            color: white;
+
+        .card {
+            background: white;
             border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        .admin-container button:hover {
-            background-color: #45a049;
-        }
-        .admin-container .register-btn {
-            background-color: #007BFF;
-            margin-top: 10px;
-        }
-        .admin-container .register-btn:hover {
-            background-color: #0056b3;
-        }
-        #recordBox {
-            display: none;
-            margin-top: 20px;
-        }
-        #recordList {
-            list-style: none;
-            padding: 0;
-        }
-        /* 添加一些动画效果 */
-        #recordBox, #booksBox {
-            transition: all 0.3s ease-in-out;
-            margin: 10px 0;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
         }
 
-        /* 收起按钮的样式 */
-        #hideRecordBtn, #hideBooksBtn {
-            background-color: #dc3545;
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            background: #4a90e2;
             color: white;
-            margin-left: 10px;
+            border-radius: 10px 10px 0 0 !important;
+            padding: 15px;
         }
 
-        #hideRecordBtn:hover, #hideBooksBtn:hover {
-            background-color: #c82333;
+        .action-btn {
+            padding: 8px 20px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            margin: 5px;
         }
 
-        /* 表格样式优化 */
+        .view-btn {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .hide-btn {
+            background: #f44336;
+            color: white;
+        }
+
+        .action-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
         table {
             width: 100%;
-            border-collapse: collapse;
-            margin: 10px 0;
-        }
-
-        th, td {
-            padding: 8px;
-            text-align: left;
-            border: 1px solid #ddd;
+            margin-top: 20px;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 10px;
+            overflow: hidden;
         }
 
         th {
-            background-color: #f5f5f5;
+            background: #4a90e2;
+            color: white;
+            padding: 12px;
+            font-weight: 500;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
         }
 
         tr:nth-child(even) {
-            background-color: #f9f9f9;
+            background: #f8f9fa;
         }
 
         tr:hover {
-            background-color: #f5f5f5;
+            background: #f1f4f8;
         }
 
-        /* 用户列表的样式 */
-        #usersBox {
-            transition: all 0.3s ease-in-out;
-            margin: 10px 0;
+        .data-container {
+            margin-top: 15px;
+            border-radius: 10px;
+            overflow: hidden;
+            display: none;
         }
 
-        #hideUsersBtn {
-            background-color: #dc3545;
-            color: white;
-            margin-left: 10px;
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
         }
 
-        #hideUsersBtn:hover {
-            background-color: #c82333;
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4a90e2;
+        }
+
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .icon {
+            margin-right: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .admin-container {
+                padding: 15px;
+            }
+            
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
-
     <div class="admin-container">
-        <h1>管理员页面</h1>
+        <h1 class="text-center mb-4">图书馆管理系统</h1>
+        
+        <!-- 统计卡片 -->
+        <div class="stats-container">
+            <div class="stat-card">
+                <i class="fas fa-book fa-2x mb-2" style="color: #4a90e2;"></i>
+                <div class="stat-number" id="totalBooks">0</div>
+                <div class="stat-label">总藏书量</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-users fa-2x mb-2" style="color: #4CAF50;"></i>
+                <div class="stat-number" id="totalUsers">0</div>
+                <div class="stat-label">注册用户数</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-exchange-alt fa-2x mb-2" style="color: #ff9800;"></i>
+                <div class="stat-number" id="totalBorrows">0</div>
+                <div class="stat-label">借阅总次数</div>
+            </div>
+        </div>
 
-        <!-- 删除用户功能 -->
-        <h3>删除用户</h3>
-        <input type="text" id="studentIdInput" placeholder="输入学号">
-        <button id="deleteBtn">删除用户</button>
+        <!-- 用户管理 -->
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-users icon"></i>用户管理
+            </div>
+            <div class="card-body">
+                <button id="viewUsersBtn" class="action-btn view-btn">
+                    <i class="fas fa-eye icon"></i>查看用户列表
+                </button>
+                <button id="hideUsersBtn" class="action-btn hide-btn" style="display: none;">
+                    <i class="fas fa-eye-slash icon"></i>收起用户列表
+                </button>
+                <div id="usersBox" class="data-container"></div>
+            </div>
+        </div>
 
-        <!-- 添加图书功能 -->
-        <h3>添加图书</h3>
-        <input type="text" id="bookTitleInput" placeholder="书名">
-        <input type="text" id="bookAuthorInput" placeholder="作者">
-        <input type="text" id="bookVersionInput" placeholder="版本">
-        <button id="addBookBtn">添加图书</button>
+        <!-- 图书管理 -->
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-book icon"></i>图书管理
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <input type="text" id="bookTitleInput" class="form-control mb-2" placeholder="书名">
+                    <input type="text" id="bookAuthorInput" class="form-control mb-2" placeholder="作者">
+                    <input type="text" id="bookVersionInput" class="form-control mb-2" placeholder="版本">
+                    <button id="addBookBtn" class="action-btn view-btn">
+                        <i class="fas fa-plus icon"></i>添加图书
+                    </button>
+                </div>
+                <button id="viewBooksBtn" class="action-btn view-btn">
+                    <i class="fas fa-list icon"></i>查看图书列表
+                </button>
+                <button id="hideBooksBtn" class="action-btn hide-btn" style="display: none;">
+                    <i class="fas fa-eye-slash icon"></i>收起图书列表
+                </button>
+                <div id="booksBox" class="data-container"></div>
+            </div>
+        </div>
 
-        <!-- 查询借阅记录功能 -->
-        <h3>查询借阅记录</h3>
-        <button id="viewRecordBtn">查看借阅记录</button>
-        <button id="hideRecordBtn" style="display: none;">收起借阅记录</button>
-        <div id="recordBox" style="display: none;"></div>
-
-        <!-- 在管理员页面添加新按钮 -->
-        <h3>查看图书列表</h3>
-        <button id="viewBooksBtn">查看所有图书</button>
-        <button id="hideBooksBtn" style="display: none;">收起图书列表</button>
-        <div id="booksBox" style="display: none;"></div>
-
-        <!-- 在管理员页面添加新按钮 -->
-        <h3>查看用户列表</h3>
-        <button id="viewUsersBtn">查看所有用户</button>
-        <button id="hideUsersBtn" style="display: none;">收起用户列表</button>
-        <div id="usersBox" style="display: none;"></div>
+        <!-- 借阅记录 -->
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-history icon"></i>借阅记录
+            </div>
+            <div class="card-body">
+                <button id="viewRecordBtn" class="action-btn view-btn">
+                    <i class="fas fa-clock icon"></i>查看借阅记录
+                </button>
+                <button id="hideRecordBtn" class="action-btn hide-btn" style="display: none;">
+                    <i class="fas fa-eye-slash icon"></i>收起借阅记录
+                </button>
+                <div id="recordBox" class="data-container"></div>
+            </div>
+        </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // 删除用户功能
-        document.getElementById('deleteBtn').addEventListener('click', function() {
-            const studentId = document.getElementById('studentIdInput').value;
-            
-            // 调用后端删除用户接口（示例接口）
-            fetch(`http://localhost:3000/admin/deleteUser?studentId=${studentId}`, {
-                method: 'DELETE'
-            })
-            .then(response => response.json())
-            .then(data => {
-                alert(data.message);
-            })
-            .catch(error => {
-                console.error('删除用户时出错:', error);
-                alert('删除用户失败。');
-            });
-        });
-
-        // 添加图书功能
-        document.getElementById('addBookBtn').addEventListener('click', function() {
-            const bookTitle = document.getElementById('bookTitleInput').value;
-            const bookAuthor = document.getElementById('bookAuthorInput').value;
-            const bookVersion = document.getElementById('bookVersionInput').value;
-
-            console.log('正在添加图书:', { bookTitle, bookAuthor, bookVersion }); // 添加调试日志
-
-            // 修改为 GET 请求
-            fetch(`http://localhost:3000/admin/addBook?bookTitle=${encodeURIComponent(bookTitle)}&bookAuthor=${encodeURIComponent(bookAuthor)}&bookVersion=${encodeURIComponent(bookVersion)}`)
-                .then(response => response.text())
-                .then(data => {
-                    console.log('服务器响应:', data);
-                    alert(data);
-                })
-                .catch(error => {
-                    console.error('添加图书时出错:', error);
-                    alert('添加图书失败');
-                });
-        });
-
-        // 借阅记录的展开/收起功能
-        document.getElementById('viewRecordBtn').addEventListener('click', function() {
-            fetch('http://localhost:3000/admin/borrowRecords')
-                .then(response => response.text())
-                .then(html => {
-                    document.getElementById('recordBox').innerHTML = html;
-                    document.getElementById('recordBox').style.display = 'block';
-                    document.getElementById('viewRecordBtn').style.display = 'none';
-                    document.getElementById('hideRecordBtn').style.display = 'inline';
-                })
-                .catch(error => {
-                    console.error('查询借阅记录时出错:', error);
-                    alert('查询借阅记录失败');
-                });
-        });
-
-        document.getElementById('hideRecordBtn').addEventListener('click', function() {
-            document.getElementById('recordBox').style.display = 'none';
-            document.getElementById('viewRecordBtn').style.display = 'inline';
-            document.getElementById('hideRecordBtn').style.display = 'none';
-        });
-
-        // 图书列表的展开/收起功能
-        document.getElementById('viewBooksBtn').addEventListener('click', function() {
-            fetch('http://localhost:3000/admin/books')
-                .then(response => response.text())
-                .then(html => {
-                    document.getElementById('booksBox').innerHTML = html;
-                    document.getElementById('booksBox').style.display = 'block';
-                    document.getElementById('viewBooksBtn').style.display = 'none';
-                    document.getElementById('hideBooksBtn').style.display = 'inline';
-                })
-                .catch(error => {
-                    console.error('查询图书列表时出错:', error);
-                    alert('查询图书列表失败');
-                });
-        });
-
-        document.getElementById('hideBooksBtn').addEventListener('click', function() {
-            document.getElementById('booksBox').style.display = 'none';
-            document.getElementById('viewBooksBtn').style.display = 'inline';
-            document.getElementById('hideBooksBtn').style.display = 'none';
-        });
-
-        // 添加查看用户列表功能
+        // 用户管理功能
         document.getElementById('viewUsersBtn').addEventListener('click', function() {
             fetch('http://localhost:3000/admin/users')
                 .then(response => response.text())
@@ -254,7 +231,7 @@
                     document.getElementById('usersBox').innerHTML = html;
                     document.getElementById('usersBox').style.display = 'block';
                     document.getElementById('viewUsersBtn').style.display = 'none';
-                    document.getElementById('hideUsersBtn').style.display = 'inline';
+                    document.getElementById('hideUsersBtn').style.display = 'inline-block';
                 })
                 .catch(error => {
                     console.error('查询用户列表时出错:', error);
@@ -264,9 +241,84 @@
 
         document.getElementById('hideUsersBtn').addEventListener('click', function() {
             document.getElementById('usersBox').style.display = 'none';
-            document.getElementById('viewUsersBtn').style.display = 'inline';
+            document.getElementById('viewUsersBtn').style.display = 'inline-block';
             document.getElementById('hideUsersBtn').style.display = 'none';
         });
+
+        // 图书管理功能
+        document.getElementById('addBookBtn').addEventListener('click', function() {
+            const bookTitle = document.getElementById('bookTitleInput').value;
+            const bookAuthor = document.getElementById('bookAuthorInput').value;
+            const bookVersion = document.getElementById('bookVersionInput').value;
+
+            fetch(`http://localhost:3000/admin/addBook?bookTitle=${encodeURIComponent(bookTitle)}&bookAuthor=${encodeURIComponent(bookAuthor)}&bookVersion=${encodeURIComponent(bookVersion)}`)
+                .then(response => response.text())
+                .then(data => {
+                    alert(data);
+                    // 清空输入框
+                    document.getElementById('bookTitleInput').value = '';
+                    document.getElementById('bookAuthorInput').value = '';
+                    document.getElementById('bookVersionInput').value = '';
+                })
+                .catch(error => {
+                    console.error('添加图书时出错:', error);
+                    alert('添加图书失败');
+                });
+        });
+
+        document.getElementById('viewBooksBtn').addEventListener('click', function() {
+            fetch('http://localhost:3000/admin/books')
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('booksBox').innerHTML = html;
+                    document.getElementById('booksBox').style.display = 'block';
+                    document.getElementById('viewBooksBtn').style.display = 'none';
+                    document.getElementById('hideBooksBtn').style.display = 'inline-block';
+                })
+                .catch(error => {
+                    console.error('查询图书列表时出错:', error);
+                    alert('查询图书列表失败');
+                });
+        });
+
+        document.getElementById('hideBooksBtn').addEventListener('click', function() {
+            document.getElementById('booksBox').style.display = 'none';
+            document.getElementById('viewBooksBtn').style.display = 'inline-block';
+            document.getElementById('hideBooksBtn').style.display = 'none';
+        });
+
+        // 借阅记录功能
+        document.getElementById('viewRecordBtn').addEventListener('click', function() {
+            fetch('http://localhost:3000/admin/borrowRecords')
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('recordBox').innerHTML = html;
+                    document.getElementById('recordBox').style.display = 'block';
+                    document.getElementById('viewRecordBtn').style.display = 'none';
+                    document.getElementById('hideRecordBtn').style.display = 'inline-block';
+                })
+                .catch(error => {
+                    console.error('查询借阅记录时出错:', error);
+                    alert('查询借阅记录失败');
+                });
+        });
+
+        document.getElementById('hideRecordBtn').addEventListener('click', function() {
+            document.getElementById('recordBox').style.display = 'none';
+            document.getElementById('viewRecordBtn').style.display = 'inline-block';
+            document.getElementById('hideRecordBtn').style.display = 'none';
+        });
+
+        // 更新统计数据
+        function updateStats() {
+            // 这里可以添加获取实际统计数据的API调用
+            document.getElementById('totalBooks').textContent = '14';
+            document.getElementById('totalUsers').textContent = '5';
+            document.getElementById('totalBorrows').textContent = '3';
+        }
+
+        // 页面加载时更新统计数据
+        updateStats();
     </script>
 </body>
 </html>
