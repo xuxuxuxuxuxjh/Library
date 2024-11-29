@@ -3,35 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>home</title>
+    <title>Library</title>
     <style>
-        .space {
-            margin-bottom: 20px; /* 设置空行的间距 */
+        /* 页面整体样式 */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-image: url('./background.png'); /* 背景图片 */
+            background-size: cover;
+            background-position: center;
+            height: 100vh; /* 占满整个视窗 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* 容器样式 */
+        .container {
+            background: rgba(255, 255, 255, 0.9); /* 半透明背景 */
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 300px; /* 宽度固定 */
+        }
+
+        .container h1 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        /* 输入框样式 */
+        .container input {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        /* 按钮样式 */
+        .container button {
+            width: 95%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .container button:hover {
+            background-color: #45a049;
+        }
+
+        /* 消息显示区域 */
+        .container #result {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #333;
         }
     </style>
 </head>
 
 <body>
-    <h1>Library</h1>
-    
-    <div class="space"></div> <!-- 添加空行 -->
+    <!-- 功能区容器 -->
+    <div class="container">
+        <h1>Library</h1>
 
-    <input type="text" id="bookNameInput" placeholder="Enter book name">
-    <button id="btnQuery">查询</button>
-    
-    <div class="space"></div> <!-- 添加空行 -->
+        <!-- 查询功能 -->
+        <input type="text" id="bookNameInput" placeholder="Enter book name">
+        <button id="btnQuery">查询</button>
 
-    <input type="text" id="bookNameInput2" placeholder="Enter book name">
-    <button id="btnBorrow">借阅</button>
+        <!-- 借阅功能 -->
+        <input type="text" id="bookNameInput2" placeholder="Enter book name">
+        <button id="btnBorrow">借阅</button>
 
-    <div class="space"></div> <!-- 添加空行 -->
+        <!-- 归还功能 -->
+        <input type="text" id="bookNameInput3" placeholder="Enter book name">
+        <button id="btnReturn">归还</button>
 
-    <input type="text" id="bookNameInput3" placeholder="Enter book name">
-    <button id="btnReturn">归还</button>
-    
-    <div id="result"></div>
+        <!-- 显示结果 -->
+        <div id="result"></div>
+    </div>
 
     <script>
+        // 查询功能
         document.getElementById('btnQuery').addEventListener('click', function() {
             const bookName = document.getElementById('bookNameInput').value;
             fetch(`http://localhost:3000/home/query?bookName=${bookName}`).then(async function(response) {
@@ -40,6 +101,7 @@
             });
         });
 
+        // 借阅功能
         document.getElementById('btnBorrow').addEventListener('click', function() {
             const bookName = document.getElementById('bookNameInput2').value;
             fetch(`http://localhost:3000/home/borrow?bookName=${bookName}`).then(async function(response) {
@@ -48,6 +110,7 @@
             });
         });
 
+        // 归还功能
         document.getElementById('btnReturn').addEventListener('click', function() {
             const bookName = document.getElementById('bookNameInput3').value;
             fetch(`http://localhost:3000/home/return?bookName=${bookName}`).then(async function(response) {

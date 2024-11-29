@@ -3,34 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>login</title>
+    <title>Library Login</title>
     <style>
-        .space {
-            margin-bottom: 20px; /* 设置空行的间距 */
+        /* 设置页面的整体样式 */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-image: url('background.png'); /* 背景图片链接 */
+            background-size: cover;
+            background-position: center;
+            height: 100vh; /* 视窗高度 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* 登录容器样式 */
+        .login-container {
+            background: rgba(255, 255, 255, 0.8); /* 半透明背景 */
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 300px;
+        }
+
+        .login-container h1 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #333;
+        }
+
+        /* 输入框样式 */
+        .login-container input {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        /* 按钮样式 */
+        .login-container button {
+            width: 95%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .login-container button:hover {
+            background-color: #45a049;
+        }
+
+        /* 消息显示区域 */
+        .login-container #result {
+            margin-top: 10px;
+            font-size: 14px;
+            color: red;
         }
     </style>
 </head>
-
 <body>
-    <h1>Library Login</h1>
-    <input type="text" id="usernameInput" placeholder="Enter username">
-    <input type="password" id="passwordInput" placeholder="Enter password">
-    <button id="loginBtn">Login</button>
-    <div id="result"></div>
+    <!-- 登录表单容器 -->
+    <div class="login-container">
+        <h1>Library Login</h1>
+        <input type="text" id="usernameInput" placeholder="Enter username">
+        <input type="password" id="passwordInput" placeholder="Enter password">
+        <button id="loginBtn">Login</button>
+        <div id="result"></div>
+    </div>
 
     <script>
+        // 登录按钮点击事件
         document.getElementById('loginBtn').addEventListener('click', function() {
             const name = document.getElementById('usernameInput').value;
             const password = document.getElementById('passwordInput').value;
-            fetch(`http://localhost:3000/login?name=${name}&password=${password}`).then(async function(response) {
-                const result = document.getElementById('result');
-                const text = await response.text();
-                result.innerHTML = text;
-                
-                if (text === '欢迎') {
-                    window.location.href = 'home'; // 跳转到主页
-                }
-            });
+
+            // 调用登录接口
+            fetch(`http://localhost:3000/login?name=${name}&password=${password}`)
+                .then(async function(response) {
+                    const result = document.getElementById('result');
+                    const text = await response.text();
+                    result.innerHTML = text;
+                    
+                    // 如果登录成功，跳转到主页
+                    if (text === '欢迎') {
+                        window.location.href = 'home'; // 替换为主页的实际路径
+                    }
+                })
+                .catch(function(error) {
+                    console.error('Login failed:', error);
+                    document.getElementById('result').innerHTML = 'Login failed. Please try again.';
+                });
         });
     </script>
 </body>
