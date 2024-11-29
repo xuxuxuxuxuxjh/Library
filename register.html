@@ -107,33 +107,22 @@
             const password = document.getElementById('passwordInput').value;
             const phone = document.getElementById('phoneInput').value;
 
-            // 调用注册接口
-            fetch(`http://localhost:3000/register`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    name: name,
-                    id: id,
-                    password: password,
-                    phone: phone
+            // 调用注册接口（GET 方法）
+            fetch(`http://localhost:3000/register/signup?name=${name}&id=${id}&password=${password}&phone=${phone}`)
+                .then(async function(response) {
+                    const result = document.getElementById('result');
+                    const text = await response.text();
+                    result.innerHTML = text;
+                    
+                    // 如果注册成功，显示成功消息
+                    if (text === '注册成功') {
+                        document.getElementById('result').style.color = 'green';
+                    }
                 })
-            })
-            .then(async function(response) {
-                const result = document.getElementById('result');
-                const text = await response.text();
-                result.innerHTML = text;
-                
-                // 如果注册成功，显示成功消息
-                if (text === '注册成功') {
-                    document.getElementById('result').style.color = 'green';
-                }
-            })
-            .catch(function(error) {
-                console.error('注册失败:', error);
-                document.getElementById('result').innerHTML = '注册失败，请重试。';
-            });
+                .catch(function(error) {
+                    console.error('注册失败:', error);
+                    document.getElementById('result').innerHTML = '注册失败，请重试。';
+                });
         });
 
         // 返回到登录页面

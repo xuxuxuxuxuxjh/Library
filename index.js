@@ -7,7 +7,7 @@ const { get } = require('http');
 const app = express();
 const client = new Client({
     user: 'postgres',
-    password: 'XJH20040215',
+    password: '0.0',
     host: 'localhost',
     port: '5432',
     database: 'library'
