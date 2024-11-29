@@ -110,7 +110,6 @@ const userData = {
     student_id: '',
 };
 
-
 const querycount = {
     text: 'SELECT COUNT(*) AS count FROM form;',
 };
@@ -132,6 +131,7 @@ function getCount() {
         console.error('查询出错:', error);
     }
 })();
+
 
 
 app.get('/login', async (req, res) => {
@@ -180,6 +180,7 @@ app.get('/register', async(req, res) => {
 });
 
 app.get('/admin', async (req, res) => {
+    console.log('22222222')
     readFile('./admin.html', 'utf-8', (err, data) => {
         if (err) {
             console.error(err);
@@ -188,7 +189,45 @@ app.get('/admin', async (req, res) => {
             res.send(data);
         }
     });
-    
+
+});
+
+async function deleteDataFromPeopleTable(studentId) {
+    const deleteQuery = {
+        text: 'DELETE FROM people WHERE student_id = $1',
+        values: [studentId]
+    };
+
+    try {
+        const result = await client.query(deleteQuery);
+
+        if (result.rowCount > 0) {
+            console.log(`成功删除student_id为 ${studentId} 的数据`);
+        } else {
+            console.log(`未找到符合条件的数据`);
+        }
+    } catch (error) {
+        console.error('删除数据时出现错误:', error);
+        throw error; // 抛出错误，可以在上层处理
+    }
+}
+
+app.get('/admin/deleteUser', async (req, res) => {
+    console.log('ssssss')
+    studentId = req.query.studentId
+    console.log(studentId)
+    if(!id){
+        res.send('请输入学号');
+        return;
+    }
+    deleteDataFromPeopleTable(studentId)
+    .then(() => {
+        res.json({ message: `成功删除studentId为 ${studentId} 的用户` });
+    })
+    .catch(error => {
+        console.error('删除用户时出错:', error);
+        res.status(500).json({ message: '删除用户失败。' });
+    });
 });
 
 app.get('/home', async (req, res) => {
