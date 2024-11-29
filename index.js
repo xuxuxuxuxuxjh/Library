@@ -121,6 +121,19 @@ async function deleteUser(studentId) {
     }
 }
 
+async function getAllBorrowRecords() {
+    try {
+        const query = {
+            text: 'SELECT * FROM form ORDER BY id DESC'
+        };
+        const result = await client.query(query);
+        return { success: true, records: result.rows };
+    } catch (error) {
+        console.error('获取借阅记录时出错:', error);
+        return { success: false, message: '获取借阅记录失败' };
+    }
+}
+
 connectToPostgres();
 
 app.get('/', (req, res) => {
@@ -468,6 +481,46 @@ app.delete('/admin/deleteUser', async (req, res) => {
         res.json(result);
     } catch (error) {
         console.error('处理删除用户请求时出错:', error);
+        res.status(500).json({ success: false, message: '服务器错误' });
+    }
+});
+
+app.get('/admin/borrowRecords', async (req, res) => {
+    if (!isAuthenticated) {
+        res.status(401).json({ success: false, message: '请先登录' });
+        return;
+    }
+
+    // 检查是否是管理员
+    if (userData.name !== 'Admin') {
+        res.status(403).json({ success: false, message: '只有管理员才能查看所有借阅记录' });
+        return;
+    }
+
+    try {
+        const result = await getAllBorrowRecords();
+        if (result.success) {
+            let recordsHtml = '<h2>借阅记录</h2><table border="1">';
+            recordsHtml += '<tr><th>记录ID</th><th>用户名</th><th>学号</th><th>书籍</th><th>状态</th><th>时间</th></tr>';
+            
+            result.records.forEach(record => {
+                recordsHtml += `<tr>
+                    <td>${record.id}</td>
+                    <td>${record.name}</td>
+                    <td>${record.student_id}</td>
+                    <td>${record.book}</td>
+                    <td>${record.status}</td>
+                    <td>${record.time}</td>
+                </tr>`;
+            });
+            
+            recordsHtml += '</table>';
+            res.send(recordsHtml);
+        } else {
+            res.status(500).json({ success: false, message: '获取借阅记录失败' });
+        }
+    } catch (error) {
+        console.error('处理获取借阅记录请求时出错:', error);
         res.status(500).json({ success: false, message: '服务器错误' });
     }
 });
