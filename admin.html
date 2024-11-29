@@ -121,26 +121,19 @@
             const bookAuthor = document.getElementById('bookAuthorInput').value;
             const bookVersion = document.getElementById('bookVersionInput').value;
 
-            // 调用后端添加图书接口（示例接口）
-            fetch('http://localhost:3000/admin/addBook', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    bookTitle: bookTitle,
-                    bookAuthor: bookAuthor,
-                    bookVersion: bookVersion
+            console.log('正在添加图书:', { bookTitle, bookAuthor, bookVersion }); // 添加调试日志
+
+            // 修改为 GET 请求
+            fetch(`http://localhost:3000/admin/addBook?bookTitle=${encodeURIComponent(bookTitle)}&bookAuthor=${encodeURIComponent(bookAuthor)}&bookVersion=${encodeURIComponent(bookVersion)}`)
+                .then(response => response.text())
+                .then(data => {
+                    console.log('服务器响应:', data);
+                    alert(data);
                 })
-            })
-            .then(response => response.json())
-            .then(data => {
-                alert(data.message);
-            })
-            .catch(error => {
-                console.error('添加图书时出错:', error);
-                alert('添加图书失败。');
-            });
+                .catch(error => {
+                    console.error('添加图书时出错:', error);
+                    alert('添加图书失败');
+                });
         });
 
         // 查询借阅记录功能

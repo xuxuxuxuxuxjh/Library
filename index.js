@@ -7,10 +7,10 @@ const { get } = require('http');
 const app = express();
 const client = new Client({
     user: 'postgres',
-    password: 'XJH20040215',
+    password: '139653',
     host: 'localhost',
     port: '5432',
-    database: 'library'
+    database: 'lib'
 });
 
 function convertToPinyin(str) {
@@ -254,26 +254,46 @@ app.get('/register/signup', async (req, res) => {
     }
 }),
 
-app.post('/register/addBook', async (req, res) => {
-    const name = req.query.bookTitle;
-    const author = req.query.bookAuthor;
-    const edition = req.query.bookVersion;
-    console.log(name)
-    console.log(author)
-    console.log(edition)
-    is_register = await checkRegister(id);
-    if (is_register)
-    {
-        res.status(400).send('该用户已注册');
-    }
-    else{
-        bookData.id ++
+app.get('/admin/addBook', async (req, res) => {
+    try {
+        const name = req.query.bookTitle;
+        const author = req.query.bookAuthor;
+        const edition = req.query.bookVersion;
+        
+        console.log('收到添加图书请求:', { name, author, edition }); // 添加调试日志
+        
+        // 检查必要参数是否存在
+        if (!name || !author || !edition) {
+            console.log('参数缺失:', { name, author, edition });
+            res.status(400).send('请填写完整的图书信息');
+            return;
+        }
+
+        // 检查图书是否已存在
+        const checkQuery = {
+            text: 'SELECT * FROM book WHERE name = $1',
+            values: [name]
+        };
+        const checkResult = await client.query(checkQuery);
+        
+        if (checkResult.rows.length > 0) {
+            res.status(400).send('该图书已存在');
+            return;
+        }
+
+        // 添加新图书
+        bookData.id++;
         const insertQuery = {
             text: 'INSERT INTO book (id, name, author, edition, status) VALUES ($1, $2, $3, $4, $5)',
             values: [bookData.id, name, author, edition, '在架']
         };
         await client.query(insertQuery);
-        res.send('加入成功')
+        
+        console.log(`成功添加图书：${name}, 作者：${author}, 版本：${edition}`);
+        res.send('图书添加成功');
+    } catch (error) {
+        console.error('添加图书时出错:', error);
+        res.status(500).send('添加图书失败');
     }
 });
 
