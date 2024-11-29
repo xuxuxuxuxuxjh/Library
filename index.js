@@ -7,10 +7,10 @@ const { get } = require('http');
 const app = express();
 const client = new Client({
     user: 'postgres',
-    password: '139653',
+    password: 'XJH20040215',
     host: 'localhost',
     port: '5432',
-    database: 'lib'
+    database: 'library'
 });
 
 function convertToPinyin(str) {
@@ -222,15 +222,10 @@ app.get('/register', async (req, res) => {
 }),
 
 app.get('/register/signup', async (req, res) => {
-    console.log('222222222')
     const name = req.query.name;
     const id = req.query.id;
     const password = req.query.password;
     const phone = req.query.phone
-    console.log(name)
-    console.log(id)
-    console.log(password)
-    console.log(phone)
     is_register = await checkRegister(id);
     if (is_register)
     {
@@ -244,10 +239,32 @@ app.get('/register/signup', async (req, res) => {
         await client.query(insertQuery);
         res.send('注册成功')
     }
+}),
+
+app.post('/register/addBook', async (req, res) => {
+    const name = req.query.bookTitle;
+    const author = req.query.bookAuthor;
+    const edition = req.query.bookVersion;
+    console.log(name)
+    console.log(author)
+    console.log(edition)
+    is_register = await checkRegister(id);
+    if (is_register)
+    {
+        res.status(400).send('该用户已注册');
+    }
+    else{
+        bookData.id ++
+        const insertQuery = {
+            text: 'INSERT INTO book (id, name, author, edition, status) VALUES ($1, $2, $3, $4, $5)',
+            values: [bookData.id, name, author, edition, '在架']
+        };
+        await client.query(insertQuery);
+        res.send('加入成功')
+    }
 });
 
 app.get('/admin', async (req, res) => {
-    console.log('22222222')
     readFile('./admin.html', 'utf-8', (err, data) => {
         if (err) {
             console.error(err);
@@ -257,44 +274,6 @@ app.get('/admin', async (req, res) => {
         }
     });
 
-});
-
-async function deleteDataFromPeopleTable(studentId) {
-    const deleteQuery = {
-        text: 'DELETE FROM people WHERE student_id = $1',
-        values: [studentId]
-    };
-
-    try {
-        const result = await client.query(deleteQuery);
-
-        if (result.rowCount > 0) {
-            console.log(`成功删除student_id为 ${studentId} 的数据`);
-        } else {
-            console.log(`未找到符合条件的数据`);
-        }
-    } catch (error) {
-        console.error('删除数据时出现错误:', error);
-        throw error; // 抛出错误，可以在上层处理
-    }
-}
-
-app.get('/admin/deleteUser', async (req, res) => {
-    console.log('ssssss')
-    studentId = req.query.studentId
-    console.log(studentId)
-    if(!id){
-        res.send('请输入学号');
-        return;
-    }
-    deleteDataFromPeopleTable(studentId)
-    .then(() => {
-        res.json({ message: `成功删除studentId为 ${studentId} 的用户` });
-    })
-    .catch(error => {
-        console.error('删除用户时出错:', error);
-        res.status(500).json({ message: '删除用户失败。' });
-    });
 });
 
 app.get('/home', async (req, res) => {
