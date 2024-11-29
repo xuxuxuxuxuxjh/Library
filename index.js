@@ -134,6 +134,34 @@ async function getAllBorrowRecords() {
     }
 }
 
+// 添加获取所有图书的函数
+async function getAllBooks() {
+    try {
+        const query = {
+            text: 'SELECT * FROM book ORDER BY id ASC'
+        };
+        const result = await client.query(query);
+        return { success: true, books: result.rows };
+    } catch (error) {
+        console.error('获取图书列表时出错:', error);
+        return { success: false, message: '获取图书列表失败' };
+    }
+}
+
+// 添加获取所有用户的函数
+async function getAllUsers() {
+    try {
+        const query = {
+            text: 'SELECT * FROM people ORDER BY id ASC'
+        };
+        const result = await client.query(query);
+        return { success: true, users: result.rows };
+    } catch (error) {
+        console.error('获取用户列表时出错:', error);
+        return { success: false, message: '获取用户列表失败' };
+    }
+}
+
 connectToPostgres();
 
 app.get('/', (req, res) => {
@@ -541,6 +569,85 @@ app.get('/admin/borrowRecords', async (req, res) => {
         }
     } catch (error) {
         console.error('处理获取借阅记录请求时出错:', error);
+        res.status(500).json({ success: false, message: '服务器错误' });
+    }
+});
+
+// 添加新的路由
+app.get('/admin/books', async (req, res) => {
+    if (!isAuthenticated) {
+        res.status(401).json({ success: false, message: '请先登录' });
+        return;
+    }
+
+    // 检查是否是管理员
+    if (userData.name !== 'Admin') {
+        res.status(403).json({ success: false, message: '只有管理员才能查看所有图书' });
+        return;
+    }
+
+    try {
+        const result = await getAllBooks();
+        if (result.success) {
+            let booksHtml = '<h2>图书列表</h2><table border="1">';
+            booksHtml += '<tr><th>ID</th><th>书名</th><th>作者</th><th>版本</th><th>状态</th></tr>';
+            
+            result.books.forEach(book => {
+                booksHtml += `<tr>
+                    <td>${book.id}</td>
+                    <td>${book.name}</td>
+                    <td>${book.author}</td>
+                    <td>${book.edition}</td>
+                    <td>${book.status}</td>
+                </tr>`;
+            });
+            
+            booksHtml += '</table>';
+            res.send(booksHtml);
+        } else {
+            res.status(500).json({ success: false, message: '获取图书列表失败' });
+        }
+    } catch (error) {
+        console.error('处理获取图书列表请求时出错:', error);
+        res.status(500).json({ success: false, message: '服务器错误' });
+    }
+});
+
+// 添加新的路由
+app.get('/admin/users', async (req, res) => {
+    if (!isAuthenticated) {
+        res.status(401).json({ success: false, message: '请先登录' });
+        return;
+    }
+
+    // 检查是否是管理员
+    if (userData.name !== 'Admin') {
+        res.status(403).json({ success: false, message: '只有管理员才能查看所有用户' });
+        return;
+    }
+
+    try {
+        const result = await getAllUsers();
+        if (result.success) {
+            let usersHtml = '<h2>用户列表</h2><table border="1">';
+            usersHtml += '<tr><th>姓名</th><th>学号</th><th>电话</th></tr>';
+            
+            result.users.forEach(user => {
+                // 不显示密码信息，保护用户隐私
+                usersHtml += `<tr>
+                    <td>${user.name}</td>
+                    <td>${user.id}</td>
+                    <td>${user.phone}</td>
+                </tr>`;
+            });
+            
+            usersHtml += '</table>';
+            res.send(usersHtml);
+        } else {
+            res.status(500).json({ success: false, message: '获取用户列表失败' });
+        }
+    } catch (error) {
+        console.error('处理获取用户列表请求时出错:', error);
         res.status(500).json({ success: false, message: '服务器错误' });
     }
 });
